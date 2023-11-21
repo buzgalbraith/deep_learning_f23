@@ -1,0 +1,235 @@
+\documentclass{article}
+\usepackage{graphicx, xcolor} % Required for inserting images
+\usepackage[shortlabels]{enumitem}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\title{Deep learning HW 2}
+\author{wbg231 }
+\date{September 2023}
+
+\begin{document}
+
+\maketitle
+
+\section{theroy}
+\subsection{Convolutional Neural Netoworks}
+\begin{enumerate}[(a)] % (a), (b), (c), ...
+\item (1pt) Given an input image of dimension 11 × 19, what will be output
+dimension after applying a convolution with 5×4 kernel, stride of 4, and no
+padding
+\begin{itemize}
+    \color{blue}
+        \item we can use the formula use the formula $$out = \frac{H-D*(k-1)+2(p)-1}{s}+1$$ 
+        \item so in this case our output would be $$H_output = \frac{11-1*(5-1)+2(0)-1}{4}+1 =\frac{11-5}{4}+1=10/4$$ and we round down to 2 
+        \item then we can get $$W_out = \frac{19-1*(4-1)+2(0)-1}{4}+1=4.75$$ and we round down to 4. 
+        \item so our output would be (1,2,4)
+\end{itemize}
+\item Given an input of dimension C × H ×W, what will be the dimension
+of the output of a convolutional layer with kernel of size K × K, padding P,
+stride S, dilation D, and F filters. Assume that H $\geq$ K, W $\geq$ K
+\begin{itemize}
+    \color{blue}
+    \item our formula for the height and with would be  $$H_{out} = floor ( \frac{H + 2*P - D * (K-1)-1}{S} +1)$$ and $$\\
+    w_{out} = floor ( \frac{W + 2*P - D * (K-1)-1}{S} + 1) $$
+    \item then we would have to do that for each of the F filters yielding an output of (F,Hout,Wout)
+\end{itemize}
+\item Let’s consider an input x[n] $\in \mathbb{R}^{5}$
+
+, with $1 \leq n \leq 7$, e.g. it is a length 7 sequence with 5 channels. We consider the convolutional layer $f_W$ with one
+filter, with kernel size 3, stride of 2, no dilation, and no padding. The only
+parameters of the convolutional layer is the weight $W$, $W \in \mathbb{R}^{1\times 5\times 3}$
+, there’s
+no bias and no non-linearity.
+\begin{enumerate}[i.]
+    \item (1pt)What is the dimension of the output $f_W (x$)? Provide an expression for the value of elements of the convolutional layer output $f_W(x)$
+    \begin{itemize}
+        \color{blue} 
+        \item we can use the same formula to determine that $$f_{W}(x)\in \mathbb{R}^{1\times 1 \times 3}$$
+        \item further we can write $$f_{w}(x)_{i,j,k}=sn(i)=\sum_{i=1}^{3}x[2(n-1) + i]^{T}W[1,:,i]$$  
+    \end{itemize}
+    \item what is the dimension of $\frac{\bold{\partial f_W(x)}}{\partial \bold{W}}$? Provide an expression for the value of elements of it. 
+    \begin{itemize}
+        \color{blue}
+        \item sorry that looks kind of wierd i typed this question in another document and only had the pdf so i just included screenshots from it. the cut off name is wbg231 (my net id )
+        \item \includegraphics*{./assigment_screenshots/part_1.png}
+    \end{itemize}
+    \item what is the dimension of $\frac{\bold{\partial f_W(x)}}{\partial \bold{x}}$? Provide an expression for the value of elements of it.
+    \begin{itemize}
+        \color{blue}
+
+        \item we can solve for the partial as $$\frac{\partial \bold{f_W(x)}}{\partial \bold{x}}=([\frac{\partial {f_W(x)_{1,1,1}}}{\partial \bold{x}}, \frac{\partial {f_W(x)_{1,1,2}}}{\partial \bold{x}}, \frac{\partial {f_W(x)_{1,1,3}}}{\partial \bold{x}}])\in \mathbb{R}^{1\times 1\times 3}$$
+        \item then we just need to check all of those 
+        \item so we can write $$\frac{\partial {f_W(x)_{1,1,n}}}{\partial \bold{x}}=\frac{\partial }{\bold{X}}\sum_{i=1}^{3}x[2(n-1) + i]^{T}W[1,:,i]=(0,0..0,W[1,:,1],W[1,:,2],W[1,:,3],0..,0)\in \mathbb{R}^{1\times 5 \times 7}$$ (that is a vector with 0 vectors everywhere and $W$ in hte ($2(n-1)+1, 2(n-1)+2$ and $2(n-1)+3$)) spaces
+        \item so its total dimensionility is $$\frac{\partial \bold{F_{w}(x)}}{\partial \bold{x}}\in\mathbb{R}^{(3)\times(7\times 5)}$$
+        \item and $$\frac{\partial \bold{F_{w}(x)}}{\partial \bold{x}}_{n,i,:}=\begin{cases}
+        W[1,1,:] & \text{if } i = 2(n-1)+1\\
+        W[1,2,:] & \text{if } i = 2(n-1)+2\\
+        W[1,3,:] & \text{if } i = 2(n-1)+3\\
+        0 & \text{otherwise}
+        \end{cases}$$
+    \end{itemize}
+    \item if we are given $\frac{\partial \ell}{\partial \bold{f_W(x)}}$ what is $\frac{\partial \ell}{\partial \bold{W}}$, what is its dimensionility.
+    \begin{itemize}
+        \color{blue}
+        \item \includegraphics*{./assigment_screenshots/part_2.png}
+        \item \includegraphics*{./assigment_screenshots/part_3.png}
+    \end{itemize}
+\end{enumerate}
+
+\end{enumerate}
+
+\subsection{Recurant Neural Netoworks}
+\subsubsection{part 1 }
+\includegraphics*[width=10cm]{/Users/hochwagenlab/Desktop/buz/school/deep_learning_f23/homework/hw2/write_up/assigment_screenshots/SC1.png}
+\begin{enumerate}[(a)]% (a), (b), (c), ...
+    \item Draw a diagram for this recurrent neural network, similar to the
+    diagram of RNN we had in class
+    \begin{itemize}
+        \color{blue}
+        \item \includegraphics*[width=10cm]{./assigment_screenshots/rnn_1.png}
+    \end{itemize}
+    \item What is the dimension of c[t]?
+    \begin{itemize}
+        \color{blue}
+        \item we can see that $(W_cX[t])\in \mathbb{R}^{m\times 1}$
+        \item and $W_hh[t-1]\in \mathbb{R}^{m \times 1}$
+        \item and we know that vector addition and  the element wise sigmoid preserve dimensionility thus $c[t]\in \mathbb{R}^{m\times 1}$
+    \end{itemize}
+    \item  Suppose that we run the RNN to get a sequence of h[t] for t from 1
+    to K. Assuming we know the derivative $\frac{\partial \ell}{\partial \bold{h[t]}}$
+    , provide dimension of and an
+    expression for values of $\frac{\partial \ell}{\partial \bold{W_x}}$
+    . What are the similarities of backward pass
+    and forward pass in this RNN?
+    \begin{itemize}
+        \color{red}
+        \item we can see that $\ell \in \mathbb{R}, h[t]\in \mathbb{R}^{m\times 1}\Rightarrow\frac{\partial \ell}{\partial \bold{h[t]}}\in \mathbb{R}^{1\times m}$
+        \item furhter we see earlier that $\frac{\partial \bold{h[t]}}{\partial \bold{W_x}}\in \mathbb{R}^{m\times m \times m}$
+        \item so we know that our $\frac{\partial \ell}{\partial \bold{W_x}}=\frac{\partial \ell}{\partial \bold{h[t]}}\frac{\partial \bold{h[t]}}{\partial \bold{W_x}}\in \mathbb{R}^{m \times m}$
+        \item 
+        \item so now we can solve $\frac{\partial \bold{c[t]}}{\bold{W_x}}=\frac{\partial }{\partial \bold{W_x}}(\sigma(W_cX[t]+W_hh[t-1]))$ we can call $z=W_cX[t]+W_hh[t-1]$ 
+        \item and then we get $\frac{\partial \bold{c[t]}}{\bold{W_x}}=\frac{\partial }{\partial \bold{W_x}}(\sigma(z(W_x)))=diag(\sigma'(z))h[t]\frac{\partial \bold{h[t-1]}}{\partial \bold{W^x}}=d_c\in \mathbb{R}^{m\times m\times m}$
+        \item let us also call $\frac{\partial \bold{h[t-1]}}{\partial \bold{w_x}}=d_{h[t-1]}$
+        \item and $\frac{\partial \bold{W_xx[t]}}{\partial \bold{W_x}}_{i,j,k}=\begin{cases}
+            x[t]_{i} & \text{if } i=j=k\\
+            0 & \text{otherwise}
+        \end{cases}\in \mathbb{R}^{M\times M\times M} = d_{x[t]}$
+        \item now we can write $\frac{\partial \bold{h[t]}}{\partial \bold{W_x}}=\frac{\partial }{\partial \bold{W_x}}(c[t]\odot h[t-1]+(1-c[t])\odot W_xx[t])
+        $ $$=h[t-1]^{t}d_c+c[t]^{t}d_{h[t-1]}-(W_xx[t])^{T}d_c+(1-c[t])^{T}d_{x[t]}$$
+        \item so finally we have $$\frac{\partial \ell}{\partial \bold{W_x}}=\frac{\partial \ell}{\partial \bold{h[t]}}\frac{\partial \bold{h[t]}}{\partial \bold{W_x}}=\frac{\partial \ell}{\partial W_x}(h[t-1]^{t}d_c+c[t]^{t}d_{h[t-1]}-(W_xx[t])^{T}d_c+(1-c[t])^{T}d_{x[t]})$$
+        \item this is similar to the forward pass in that there is still a recurrent relationship
+        \item and we are also integrating both $c[t], h[t]$ and $h[t-1]$ into our predictions 
+        
+
+
+
+
+
+
+    \end{itemize}
+    \item Can our gradient vanish or explode in this network?
+    \begin{itemize}
+        \color{blue}
+        \item yes this network can be subject to exploding gradients as our sigmoid activation function will constantly scale our inputs to be between 0 and 1 so after many itterations our gradinets could get quite small and vanish 
+    \end{itemize}
+    \subsubsection{part 2}
+    \begin{enumerate} [(a)]
+        \item draw the network diagram
+        \begin{itemize}
+            \color{blue}
+            \item \includegraphics*[width=10cm]{./assigment_screenshots/rnn_2.png}
+        \end{itemize}
+        \item what is the dimension of $a[t]$?
+        \begin{itemize}
+            \color{blue}
+            \item $a[t]\in \mathbb{R}^{3}$
+        \end{itemize}
+        \item Extend this to, AttentionRNN(k), a network that uses the last k
+        state vectors h. Write out the system of equations that defines it. You may
+        use set notation or ellipses (...) in your definition.
+        \begin{itemize}
+            \color{blue}
+            \item $\forall i\in [0,K]$
+             \item $\begin{cases}
+                q_{i}[t]=Q_0x[t] \text{if i=0}\\
+                q_{i}[t]=Q_{i}h[t-i] \text{if } i> 0
+            \end{cases}$
+            \item $\begin{cases}
+                k_{i}[t]=K_0x[t] \text{if i=0}\\
+                k_{i}[t]=K_{i}h[t-i] \text{if } i> 0
+            \end{cases}$
+            \item $\begin{cases}
+                v_{i}[t]=V_0x[t] \text{if i=0}\\
+                v_{i}[t]=V_{i}h[t-i] \text{if } i> 0
+            \end{cases}$
+            \item $w_t[t]=q_{i}^{T}[t]k_[i][t]\quad \forall i\in [0,k]$
+            \item $a[t]=\text{softmax}(\{w_i[t]\}_{i=1}^{k})$
+            \item $h[t]=\sum_{i=1}^{t}a_{i}[t]v_{i}[t]$
+        \end{itemize}
+        \item Modify the above network to produce AttentionRNN($\infty$), a network
+        that uses every past state vector. Write out the system of equations that defines it. You may use set notation or ellipses (...) in your definition. HINT:
+        We can do this by tying together some set of parameters, e.g. weight sharing.
+        \begin{itemize}
+            \color{blue}
+            \item $q_{0}[t],q_{1}[t]\cdots q_{m-1}[t]=Q_{0}x[t], Q_{1}h[t-1]\cdots Q_{m}h[0]$
+            \item $k_{0}[t],k_{1}[t]\cdots k_{m-1}[t]=K_{0}x[t], K_{1}h[t-1]\cdots K_{m}h[0]$
+            \item $v_{0}[t],v_{1}[t]\cdots v_{m-1}[t]=V_{0}x[t], V_{1}h[t-1]\cdots V_{m}h[0]$
+            \item $w_{i}[t]=q_{i}[t]^{T}k_{i}[t]$
+            \item a[t]=softmax($\{w_{i}[t]\}_{i=1}^{m}$)
+            \item h[t]=$\sum_{i=0}^{m}a_{i}[t]v_{i}[t]$
+        \end{itemize}
+        \item Suppose the loss $\ell$ is computed. Please write down the expression
+        for$ \frac{\partial \bold{h[t]}}{\partial \bold{h[t-1]}}$for AttentionRNN(2).
+        \begin{itemize}
+            \color{blue}
+            \item so we know that $ \frac{\partial \bold{h[t]}}{\partial \bold{h[t-1]}}=\frac{\partial }{\partial h[t-1]}(\sum_{i=1}^{2}a_{i}[t]v_{i}[t])$
+            \item so now we need $\frac{\partial \bold{a_i[t]v_i[t]}}{\partial \bold{h[t-1]}}=a_{i}[t]\frac{\partial \bold{v_i[t]}}{\partial \bold{h[t-1]}}+\frac{\partial {a_i[t]}}{\partial \bold{h[t-1]}}v_i[t]$
+            \item ok so now we can check $\frac{\partial a_i[t]}{\partial \bold{h_i[t]}}=softargmax(w_0, w_1, w_2)=\frac{\partial softargmax}{\partial w}\odot(\frac{\partial w_0}{\partial \bold{h[t-1]}}+\frac{\partial w_1}{\partial \bold{h[t-1]}}+\frac{\partial w_2}{\partial \bold{h[t-1]}})$%
+            \item we can see $d_0= \frac{\partial w_0}{\partial h[t-1]}=\frac{\partial }{\partial h[t-1]}(Q_{0}x[t])^{T}K_{0}x[t]=0$
+            \item so we can see that $d_1 = \frac{\partial w_1}{\partial \bold{h[t-1]}}=(h[t-1]^{T}K_{1}Q_{1}^{T}+h[t-1]^{T}Q_{1}K_{1})$
+            \item further wen see that $d_2 =\frac{\partial w_2}{\partial \bold{h[t-1]}}=\frac{\partial}{\partial \bold{h[t-1]}}(q_2[t]^{t}h_2[t])=h[t-2]^{t}K_{2}\frac{\partial h[t-2]}{\partial h[t-1]}^{t}Q_{2}^{t}+h[t-2]^{t}Q_{2}(\frac{\partial h[t-2]}{\partial h[t-1]})^{t}K_{2}^t$
+            \item thus we have $$v= \frac{\partial a_i[t]}{\partial \bold{h_i[t]}}=softargmax(w_0, w_1, w_2)=\frac{\partial softargmax}{\partial w}\odot(\frac{\partial w_0}{\partial \bold{h[t-1]}}+\frac{\partial w_1}{\partial \bold{h[t-1]}}+\frac{\partial w_2}{\partial \bold{h[t-1]}})$$ $$=\frac{\partial softargmax(w)}{\partial w}\odot(d_1+d_2)$$
+            \item we can also see that $e_0 = \frac{\partial \bold{v_0}}{\partial \bold{h[t-1]}}=0$
+            \item $e_1= \frac{\partial \bold{v_1}}{\partial \bold{h[t-1]}}=V_{1}^T$
+            \item $e_2 = \frac{\partial \bold{v_2}}{\partial \bold{h[t-1]}}=\frac{\partial \bold{h[t-2]}}{\partial \bold{h[t-2]}}V_{2}^{T}$
+            \item and thus we finally have $e=\frac{\partial v_0}{\partial \bold{h[t-1]}}+\frac{\partial v_1}{\partial \bold{h[t-1]}}+\frac{\partial v_0}{\partial \bold{h[t-1]}}=e_1+e_2$
+            \item so in total we have $$\frac{\partial \bold{h[t]}}{\partial \bold{h[t-1]}}=$$ $$\frac{\partial }{\partial h[t-1]}(\sum_{i=1}^{2}a_{i}[t]v_{i}[t])=\sum_{i=1}^{2}a_{i}[t]\frac{\partial \bold{v_i[t]}}{\partial \bold{h[t-1]}}+\frac{\partial {a_i[t]}}{\partial \bold{h[t-1]}}v_i[t]=\sum_{i=1}^{2}a_{i}[t]e_i[t]+v_i[t]d_i[t]$$
+        \end{itemize}
+        \item what is the formula for $\frac{\partial \ell }{h[T]}$ with AttentionRNN(K)
+        \begin{itemize}
+            \color{blue}
+            \item in AttentionRNN(k) we can write $\frac{\partial h[t]}{\partial h[t-1]}=\sum_{i=1}^{k}a_{i}[t]e_[i][t](\frac{\partial \bold{h(t-i)}}{\partial \bold{h[t-1]}})+v_{i}[t]d_{i}[t](\frac{\partial \bold{h(t-i)}}{\partial \bold{h[t-1]}})$
+            \item thus we can see that $\frac{\partial \ell}{\partial \bold{h[T]}}=\sum_{i\in[k+1, t]}\frac{\partial \ell}{\partial \bold{h[i]}}+\frac{\partial \bold{h[T+1]}}{\partial \bold{H[T]}}=\sum_{i\in[k+1, t]}\frac{\partial \ell}{\partial \bold{h[i]}}+\sum_{i=1}^{K}a_{i}[t]e_{i}[t](\frac{\bold{h[T-i]}}{\partial \bold{h[T]}})+v_{i}[t]d_{i}[t]\frac{\partial \bold{h[T-i]}}{\partial \bold{h[T]}}$
+        \end{itemize}
+    
+    \end{enumerate}
+\end{enumerate}
+\subsection{Debugging loss curves}
+\begin{enumerate} [(a)] 
+   \item  what is the cause of the spikes on the left graph 
+   \begin{itemize}
+    \color{blue}
+    \item 
+    \item the left spikes are areas where despite increasing epochs there are large spikes in model error for an rnn model. This is likely due to the exploding gradient problem where the gradients are so large that they cause the model to diverge and thus the loss to increase. that is if our gradient is really high using GD even with a small learing rate we will move very far away forom our prevous optima
+   \end{itemize}
+    \item how can they be higher than the inital value
+    \begin{itemize}
+        \color{blue}
+        \item effectivly this is becuase the weights were intialized to be very small and random so the that erorr is pretty much just guassing evenly, here we are following the exploding gradinet in a way that we are doing worse than guessing 
+       \end{itemize}
+    \item what are some ways to fix them 
+    \begin{itemize}
+        \color{blue}
+        \item we can use gradient clipping to prevent the gradients from getting too large
+        \item we can also use a smaller learning rate to prevent the gradients from getting too large
+        \item we can use an LSTM model which is less prone to exploding gradients
+       \end{itemize}
+    \item Explain why the loss and accuracy are at these values before training
+    starts. You may need to check the task definition in the notebook.
+    \begin{itemize}
+        \color{blue}
+        \item there are 4 possibilities Q,R,S,U so we are guessing rand omly with $\frac{1}{4}$ then taking the natural log of that we get$log(4)=1.3$
+       \end{itemize}
+\end{enumerate}
+\end{document}
